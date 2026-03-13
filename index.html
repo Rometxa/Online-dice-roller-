@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Online Dice</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+background:#8DB1D8;
+font-family:'Baloo 2', cursive;
+text-align:center;
+margin:20px;
+}
+
+/* MAIN BLUE GAME BOX */
+
+#mainGame{
+background:#5B9BD5;
+width:95%;
+margin:auto;
+padding:25px;
+border-radius:25px;
+box-shadow:0 10px 25px rgba(0,0,0,0.25);
+}
+
+/* TITLE */
+
+#titleBox{
+padding:10px;
+color:white;
+font-size:46px;
+}
+
+/* DICE SELECTOR */
+
+#diceSelector{
+width:100%;
+margin:20px auto;
+padding:18px;
+
+background:#eeeeee;
+border-radius:20px;
+border:6px solid #2d84d8;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+box-shadow:0 6px 0 #1d6db5;
+}
+
+#diceText{
+font-size:36px;
+color:#2d84d8;
+}
+
+#diceArrows button{
+background:none;
+border:none;
+font-size:30px;
+cursor:pointer;
+}
+
+/* DICE AREA */
+
+#diceContainer{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+margin:30px;
+}
+
+/* DICE */
+
+.dice{
+width:110px;
+height:110px;
+border-radius:22px;
+display:flex;
+align-items:center;
+justify-content:center;
+margin:10px;
+box-shadow:0 0 15px rgba(0,0,0,0.4);
+}
+
+.dot{
+width:30px;
+height:30px;
+background:white;
+border-radius:50%;
+box-shadow:0 0 20px white;
+}
+
+/* SHAKE ANIMATION */
+
+@keyframes shake{
+0%{transform:translateX(0)}
+25%{transform:translateX(-6px)}
+50%{transform:translateX(6px)}
+75%{transform:translateX(-6px)}
+100%{transform:translateX(0)}
+}
+
+.shake{
+animation:shake 0.5s;
+}
+
+/* ROLL BUTTON */
+
+#rollButton{
+width:100%;
+padding:20px;
+font-size:34px;
+color:white;
+
+background:linear-gradient(to bottom,#ffe95a,#ffc400);
+
+border-radius:18px;
+border:6px solid white;
+
+box-shadow:
+0 8px 0 #d19b00,
+0 0 25px rgba(255,220,0,0.8);
+
+cursor:pointer;
+}
+
+/* INFO BAR */
+
+#colorInfo{
+margin:15px auto;
+padding:14px;
+
+background:#3a8edc;
+border-radius:15px;
+
+color:white;
+font-size:20px;
+}
+
+/* COLOR PICKER */
+
+#colorPicker{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:18px;
+margin-top:25px;
+}
+
+.colorOption{
+background:#eeeeee;
+border-radius:20px;
+padding:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+font-size:22px;
+cursor:pointer;
+box-shadow:0 5px 0 #c9c9c9;
+}
+
+.check{
+background:#2a8cff;
+color:white;
+width:28px;
+height:28px;
+border-radius:8px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* COLOR TEXT */
+
+.redText{color:red}
+.orangeText{color:orange}
+.yellowText{color:#ffd700}
+.greenText{color:green}
+.blueText{color:blue}
+.purpleText{color:purple}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+.dice{
+width:80px;
+height:80px;
+}
+
+#diceText{
+font-size:28px;
+}
+
+#rollButton{
+font-size:26px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="mainGame">
+
+<div id="titleBox">ONLINE DICE</div>
+
+<div id="diceSelector">
+
+<span id="diceText">4 Dice</span>
+
+<div id="diceArrows">
+<button onclick="changeDice(1)">▲</button>
+<button onclick="changeDice(-1)">▼</button>
+</div>
+
+</div>
+
+<div id="diceContainer"></div>
+
+<button id="rollButton" onclick="rollDice()">ROLL AGAIN !</button>
+
+<div id="colorInfo">
+Possible colors are:
+<span class="redText">Red</span>,
+<span class="orangeText">Orange</span>,
+<span class="yellowText">Yellow</span>,
+<span class="greenText">Green</span>,
+<span class="blueText">Blue</span>,
+and
+<span class="purpleText">Purple</span>.
+</div>
+
+</div>
+
+<div id="colorPicker">
+
+<div class="colorOption" onclick="toggleColor('red',this)">
+<div class="check">✔</div>
+<span class="redText">RED</span>
+</div>
+
+<div class="colorOption" onclick="toggleColor('orange',this)">
+<div class="check">✔</div>
+<span class="orangeText">ORANGE</span>
+</div>
+
+<div class="colorOption" onclick="toggleColor('yellow',this)">
+<div class="check">✔</div>
+<span class="yellowText">YELLOW</span>
+</div>
+
+<div class="colorOption" onclick="toggleColor('green',this)">
+<div class="check">✔</div>
+<span class="greenText">GREEN</span>
+</div>
+
+<div class="colorOption" onclick="toggleColor('blue',this)">
+<div class="check">✔</div>
+<span class="blueText">BLUE</span>
+</div>
+
+<div class="colorOption" onclick="toggleColor('purple',this)">
+<div class="check">✔</div>
+<span class="purpleText">PURPLE</span>
+</div>
+
+</div>
+
+<script>
+
+let diceAmount = 4
+let activeColors = ["red","orange","yellow","green","blue","purple"]
+
+function changeDice(change){
+
+diceAmount += change
+
+if(diceAmount < 1) diceAmount = 1
+if(diceAmount > 10) diceAmount = 10
+
+document.getElementById("diceText").innerText = diceAmount + " Dice"
+
+}
+
+function toggleColor(color,element){
+
+if(activeColors.includes(color)){
+
+activeColors = activeColors.filter(c => c !== color)
+element.style.opacity = "0.4"
+
+}else{
+
+activeColors.push(color)
+element.style.opacity = "1"
+
+}
+
+}
+
+function rollDice(){
+
+let container = document.getElementById("diceContainer")
+container.innerHTML=""
+
+if(activeColors.length === 0){
+alert("Select at least one color!")
+return
+}
+
+for(let i=0;i<diceAmount;i++){
+
+let color = activeColors[Math.floor(Math.random()*activeColors.length)]
+
+let dice = document.createElement("div")
+dice.className="dice shake"
+dice.style.background=color
+
+let dot=document.createElement("div")
+dot.className="dot"
+
+dice.appendChild(dot)
+container.appendChild(dice)
+
+}
+
+}
+
+rollDice()
+
+</script>
+
+</body>
+</html>
